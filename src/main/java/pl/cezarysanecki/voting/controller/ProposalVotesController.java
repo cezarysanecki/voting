@@ -1,45 +1,48 @@
 package pl.cezarysanecki.voting.controller;
 
-import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import pl.cezarysanecki.voting.service.ProposalVotesService;
+import pl.cezarysanecki.voting.model.VoteQuestionnaire;
+import pl.cezarysanecki.voting.service.VoteQuestionnaireService;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/voting/proposal")
-@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
-class ProposalVotesController {
+@RequiredArgsConstructor
+public class ProposalVotesController {
 
-  private final ProposalVotesService proposalVotesService;
+  private final VoteQuestionnaireService voteQuestionnaireService;
 
   @PostMapping
-  void createProposal() {
-    proposalVotesService.createProposal();
+  VoteQuestionnaire createQuestionnaire(@RequestBody VoteQuestionnaire voteQuestionnaire) {
+    return voteQuestionnaireService.createQuestionnaire(voteQuestionnaire);
   }
 
-  @PutMapping
-  void editProposal() {
-    proposalVotesService.editProposal();
+  @PutMapping("/{id}")
+  VoteQuestionnaire editQuestionnaire(Long id, @RequestBody VoteQuestionnaire voteQuestionnaire) {
+    return voteQuestionnaireService.editQuestionnaire(id, voteQuestionnaire);
   }
 
-  @DeleteMapping
-  void deleteProposal() {
-    proposalVotesService.deleteProposal();
+  @DeleteMapping("/{id}")
+  void deleteProposal(Long id) {
+    voteQuestionnaireService.deleteQuestionnaire(id);
+  }
+
+  @GetMapping("/{id}")
+  VoteQuestionnaire getProposal(Long id) {
+    return voteQuestionnaireService.getQuestionnaire(id);
   }
 
   @GetMapping
-  void getProposal() {
-    proposalVotesService.getProposal();
-  }
-
-  @GetMapping
-  void getProposals() {
-    proposalVotesService.getProposals();
+  List<VoteQuestionnaire> getProposals() {
+    return voteQuestionnaireService.getQuestionnaires();
   }
 
 }
