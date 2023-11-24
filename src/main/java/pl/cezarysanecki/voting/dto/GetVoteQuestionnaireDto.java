@@ -12,7 +12,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(force = true)
-public class VoteQuestionnaireDto {
+public class GetVoteQuestionnaireDto {
 
   Long id;
   List<QuestionDto> questions;

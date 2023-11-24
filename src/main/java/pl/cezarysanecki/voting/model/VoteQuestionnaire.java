@@ -10,7 +10,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-import pl.cezarysanecki.voting.dto.VoteQuestionnaireDto;
+import pl.cezarysanecki.voting.dto.GetVoteQuestionnaireDto;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -38,8 +38,8 @@ public class VoteQuestionnaire {
   @Column(name = "voting_expiry_date_time")
   private LocalDateTime votingExpiryDateTime;
 
-  public VoteQuestionnaireDto toDto() {
-    return VoteQuestionnaireDto.builder()
+  public GetVoteQuestionnaireDto toDto() {
+    return GetVoteQuestionnaireDto.builder()
         .id(id)
         .questions(questions.stream()
             .map(Question::toDto)
