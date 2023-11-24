@@ -8,7 +8,9 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import pl.cezarysanecki.voting.dto.VoteQuestionnaireDto;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -32,7 +34,20 @@ public class VoteQuestionnaire {
   @Column(name = "ready_to_vote")
   private boolean readyToVote;
 
+  @NotNull
   @Column(name = "voting_expiry_date_time")
   private LocalDateTime votingExpiryDateTime;
+
+  public VoteQuestionnaireDto toDto() {
+    return VoteQuestionnaireDto.builder()
+        .id(id)
+        .questions(questions.stream()
+            .map(Question::toDto)
+            .toList())
+        .creationDateTime(creationDateTime)
+        .readyToVote(readyToVote)
+        .votingExpiryDateTime(votingExpiryDateTime)
+        .build();
+  }
 
 }

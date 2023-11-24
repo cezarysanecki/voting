@@ -9,6 +9,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
+import pl.cezarysanecki.voting.dto.QuestionAnswerDto;
 
 @Data
 @Entity
@@ -26,5 +27,11 @@ public class QuestionAnswer {
   @ManyToOne
   @JoinColumn(name = "question_id")
   private Question question;
+
+  public QuestionAnswerDto toDto() {
+    return QuestionAnswerDto.builder()
+        .value(value)
+        .build();
+  }
 
 }

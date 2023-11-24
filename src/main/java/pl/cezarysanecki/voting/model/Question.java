@@ -11,6 +11,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Data;
+import pl.cezarysanecki.voting.dto.QuestionDto;
 
 import java.util.List;
 
@@ -33,5 +34,14 @@ public class Question {
 
   @OneToMany(cascade = CascadeType.ALL)
   private List<QuestionAnswer> answers;
+
+  public QuestionDto toDto() {
+    return QuestionDto.builder()
+        .text(text)
+        .answers(answers.stream()
+            .map(QuestionAnswer::toDto)
+            .toList())
+        .build();
+  }
 
 }
