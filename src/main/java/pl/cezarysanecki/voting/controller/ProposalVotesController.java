@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pl.cezarysanecki.voting.dto.CreateVoteQuestionnaireDto;
+import pl.cezarysanecki.voting.dto.UpdateVoteQuestionnaireDto;
 import pl.cezarysanecki.voting.dto.VoteQuestionnaireDto;
 import pl.cezarysanecki.voting.model.VoteQuestionnaire;
 import pl.cezarysanecki.voting.service.VoteQuestionnaireService;
@@ -29,8 +30,8 @@ public class ProposalVotesController {
   }
 
   @PutMapping("/{id}")
-  VoteQuestionnaireDto editQuestionnaire(@PathVariable Long id, @RequestBody VoteQuestionnaireDto voteQuestionnaire) {
-    return voteQuestionnaireService.editQuestionnaire(id, voteQuestionnaire);
+  VoteQuestionnaireDto editQuestionnaire(@PathVariable Long id, @RequestBody UpdateVoteQuestionnaireDto updateVoteQuestionnaireDto) {
+    return voteQuestionnaireService.editQuestionnaire(id, updateVoteQuestionnaireDto);
   }
 
   @DeleteMapping("/{id}")
