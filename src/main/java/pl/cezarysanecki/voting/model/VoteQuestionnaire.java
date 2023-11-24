@@ -15,7 +15,7 @@ import java.util.List;
 
 @Data
 @Entity
-@Table(name = "vote_questionnaire")
+@Table(schema = "voting", name = "vote_questionnaire")
 public class VoteQuestionnaire {
 
   @Id

@@ -5,6 +5,6 @@ spring:
     password: voting01
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
   liquibase:
     change-log: db/changelog/db.changelog-master.xml
