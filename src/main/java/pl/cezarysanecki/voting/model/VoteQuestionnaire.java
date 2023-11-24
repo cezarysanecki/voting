@@ -6,6 +6,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
@@ -37,6 +39,10 @@ public class VoteQuestionnaire {
   @NotNull
   @Column(name = "voting_expiry_date_time")
   private LocalDateTime votingExpiryDateTime;
+
+  @ManyToOne
+  @JoinColumn(name = "creator_id")
+  private Party creator;
 
   public GetVoteQuestionnaireDto toDto() {
     return GetVoteQuestionnaireDto.builder()

@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
@@ -30,5 +31,9 @@ public class VoterFilledQuestionnaire {
   @OneToMany
   @JoinColumn(name = "answered_question_id")
   private List<AnsweredQuestion> answeredQuestions;
+
+  @ManyToOne
+  @JoinColumn(name = "voter_id")
+  private Party voter;
 
 }
