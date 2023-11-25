@@ -44,11 +44,10 @@ public class ProposalVotesController {
     voteQuestionnaireService.deleteQuestionnaire(partyId, questionnaireId);
   }
 
-  @GetMapping("/{questionnaireId}/party/{partyId}")
+  @GetMapping("/{questionnaireId}")
   VoteQuestionnaireDto getProposal(
-      @PathVariable("questionnaireId") Long questionnaireId,
-      @PathVariable("partyId") Long partyId) {
-    return voteQuestionnaireService.getQuestionnaire(partyId, questionnaireId);
+      @PathVariable("questionnaireId") Long questionnaireId) {
+    return voteQuestionnaireService.getQuestionnaire(questionnaireId);
   }
 
   @GetMapping

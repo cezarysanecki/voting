@@ -18,6 +18,7 @@ import pl.cezarysanecki.voting.repository.VoteQuestionnaireRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.function.Predicate;
 
 @Service
 @RequiredArgsConstructor
@@ -31,6 +32,18 @@ public class VoteQuestionnaireService {
       CreateVoteQuestionnaireDto createVoteQuestionnaireDto) {
     Party party = partyRepository.findById(partyId)
         .orElseThrow(() -> new IllegalStateException("cannot find party by id: " + partyId));
+
+    // maybe VIP flag?
+    if (createVoteQuestionnaireDto.getQuestions().size() + 1 > 10) {
+      throw new IllegalArgumentException("questionnaire cannot have more then 10 questions");
+    }
+    if (party.getQuestionnaires()
+        .stream()
+        .filter(Predicate.not(VoteQuestionnaire::isReadyToVote))
+        .filter(questionnaire -> questionnaire.getVotingExpiryDateTime() == null)
+        .count() + 1 > 10) {
+      throw new IllegalArgumentException("user cannot have more then 10 draft questionnaires");
+    }
 
     VoteQuestionnaire entityVoteQuestionnaire = new VoteQuestionnaire();
 
@@ -49,11 +62,21 @@ public class VoteQuestionnaireService {
       Long partyId,
       Long questionnaireId,
       EditVoteQuestionnaireDto editVoteQuestionnaireDto) {
+    if (editVoteQuestionnaireDto.getQuestions().size() + 1 > 10) {
+      throw new IllegalArgumentException("questionnaire cannot have more then 10 questions");
+    }
+
     VoteQuestionnaire foundVoteQuestionnaire = voteQuestionnaireRepository.findById(questionnaireId)
         .orElseThrow(() -> new IllegalStateException("cannot find questionnaire by id: " + questionnaireId));
 
     if (!foundVoteQuestionnaire.getCreator().getId().equals(partyId)) {
       throw new IllegalArgumentException("only creator can edit questionnaire");
+    }
+    if (foundVoteQuestionnaire.isReadyToVote()) {
+      throw new IllegalArgumentException("cannot edit active questionnaire");
+    }
+    if (foundVoteQuestionnaire.getVotingExpiryDateTime() != null) {
+      throw new IllegalArgumentException("cannot edit historical questionnaire");
     }
 
     foundVoteQuestionnaire.setTitle(editVoteQuestionnaireDto.getTitle());
@@ -71,17 +94,19 @@ public class VoteQuestionnaireService {
     if (!foundVoteQuestionnaire.getCreator().getId().equals(partyId)) {
       throw new IllegalArgumentException("only creator can edit questionnaire");
     }
+    if (foundVoteQuestionnaire.isReadyToVote()) {
+      throw new IllegalArgumentException("cannot delete active questionnaire");
+    }
+    if (foundVoteQuestionnaire.getVotingExpiryDateTime() != null) {
+      throw new IllegalArgumentException("cannot delete archive questionnaire");
+    }
 
     voteQuestionnaireRepository.delete(foundVoteQuestionnaire);
   }
 
-  public VoteQuestionnaireDto getQuestionnaire(Long partyId, Long questionnaireId) {
+  public VoteQuestionnaireDto getQuestionnaire(Long questionnaireId) {
     VoteQuestionnaire foundVoteQuestionnaire = voteQuestionnaireRepository.findById(questionnaireId)
         .orElseThrow(() -> new IllegalStateException("cannot find questionnaire by id: " + questionnaireId));
-
-    if (!foundVoteQuestionnaire.getCreator().getId().equals(partyId)) {
-      throw new IllegalArgumentException("only creator can edit questionnaire");
-    }
 
     return foundVoteQuestionnaire.toDto();
   }
