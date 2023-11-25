@@ -4,10 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.stereotype.Service;
 import pl.cezarysanecki.voting.dto.CreateVoteQuestionnaireDto;
+import pl.cezarysanecki.voting.dto.VoteQuestionnaireDto;
 import pl.cezarysanecki.voting.dto.QuestionAnswerDto;
 import pl.cezarysanecki.voting.dto.QuestionDto;
 import pl.cezarysanecki.voting.dto.UpdateVoteQuestionnaireDto;
-import pl.cezarysanecki.voting.dto.GetVoteQuestionnaireDto;
 import pl.cezarysanecki.voting.model.Question;
 import pl.cezarysanecki.voting.model.QuestionAnswer;
 import pl.cezarysanecki.voting.model.VoteQuestionnaire;
@@ -22,19 +22,20 @@ public class VoteQuestionnaireService {
 
   private final VoteQuestionnaireRepository voteQuestionnaireRepository;
 
-  public GetVoteQuestionnaireDto createQuestionnaire(CreateVoteQuestionnaireDto createVoteQuestionnaireDto) {
+  public VoteQuestionnaireDto createQuestionnaire(CreateVoteQuestionnaireDto createVoteQuestionnaireDto) {
     VoteQuestionnaire entityVoteQuestionnaire = new VoteQuestionnaire();
 
-    entityVoteQuestionnaire.setCreationDateTime(LocalDateTime.now());
+    entityVoteQuestionnaire.setTitle(createVoteQuestionnaireDto.getTitle());
     entityVoteQuestionnaire.setReadyToVote(false);
-    entityVoteQuestionnaire.setVotingExpiryDateTime(createVoteQuestionnaireDto.getVotingExpiryDateTime());
+    entityVoteQuestionnaire.setVotingExpiryDateTime(null);
+    entityVoteQuestionnaire.setCreationDateTime(LocalDateTime.now());
     entityVoteQuestionnaire.setQuestions(mapQuestions(createVoteQuestionnaireDto.getQuestions(), entityVoteQuestionnaire));
 
     return voteQuestionnaireRepository.save(entityVoteQuestionnaire)
         .toDto();
   }
 
-  public GetVoteQuestionnaireDto editQuestionnaire(final Long id, UpdateVoteQuestionnaireDto updateVoteQuestionnaireDto) {
+  public VoteQuestionnaireDto editQuestionnaire(final Long id, UpdateVoteQuestionnaireDto updateVoteQuestionnaireDto) {
     VoteQuestionnaire foundVoteQuestionnaire = voteQuestionnaireRepository.findById(id)
         .orElseThrow(() -> new IllegalStateException("cannot find questionnaire for id: " + id));
 
@@ -52,13 +53,13 @@ public class VoteQuestionnaireService {
     voteQuestionnaireRepository.deleteById(id);
   }
 
-  public GetVoteQuestionnaireDto getQuestionnaire(Long id) {
+  public VoteQuestionnaireDto getQuestionnaire(Long id) {
     return voteQuestionnaireRepository.findById(id)
         .orElseThrow(() -> new IllegalStateException("cannot find questionnaire for id: " + id))
         .toDto();
   }
 
-  public List<GetVoteQuestionnaireDto> getQuestionnaires() {
+  public List<VoteQuestionnaireDto> getQuestionnaires() {
     return IterableUtils.toList(voteQuestionnaireRepository.findAll())
         .stream()
         .map(VoteQuestionnaire::toDto)

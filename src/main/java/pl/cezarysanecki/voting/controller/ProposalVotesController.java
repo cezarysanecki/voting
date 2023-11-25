@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pl.cezarysanecki.voting.dto.CreateVoteQuestionnaireDto;
 import pl.cezarysanecki.voting.dto.UpdateVoteQuestionnaireDto;
-import pl.cezarysanecki.voting.dto.GetVoteQuestionnaireDto;
+import pl.cezarysanecki.voting.dto.VoteQuestionnaireDto;
 import pl.cezarysanecki.voting.service.VoteQuestionnaireService;
 
 import java.util.List;
@@ -24,12 +24,12 @@ public class ProposalVotesController {
   private final VoteQuestionnaireService voteQuestionnaireService;
 
   @PostMapping
-  GetVoteQuestionnaireDto createQuestionnaire(@RequestBody CreateVoteQuestionnaireDto createVoteQuestionnaireDto) {
+  VoteQuestionnaireDto createQuestionnaire(@RequestBody CreateVoteQuestionnaireDto createVoteQuestionnaireDto) {
     return voteQuestionnaireService.createQuestionnaire(createVoteQuestionnaireDto);
   }
 
   @PutMapping("/{id}")
-  GetVoteQuestionnaireDto editQuestionnaire(@PathVariable Long id, @RequestBody UpdateVoteQuestionnaireDto updateVoteQuestionnaireDto) {
+  VoteQuestionnaireDto editQuestionnaire(@PathVariable Long id, @RequestBody UpdateVoteQuestionnaireDto updateVoteQuestionnaireDto) {
     return voteQuestionnaireService.editQuestionnaire(id, updateVoteQuestionnaireDto);
   }
 
@@ -39,12 +39,12 @@ public class ProposalVotesController {
   }
 
   @GetMapping("/{id}")
-  GetVoteQuestionnaireDto getProposal(@PathVariable Long id) {
+  VoteQuestionnaireDto getProposal(@PathVariable Long id) {
     return voteQuestionnaireService.getQuestionnaire(id);
   }
 
   @GetMapping
-  List<GetVoteQuestionnaireDto> getProposals() {
+  List<VoteQuestionnaireDto> getProposals() {
     return voteQuestionnaireService.getQuestionnaires();
   }
 

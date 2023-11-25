@@ -14,8 +14,7 @@ import java.util.List;
 @NoArgsConstructor(force = true)
 public class CreateVoteQuestionnaireDto {
 
+  String title;
   List<QuestionDto> questions;
-  boolean readyToVote;
-  LocalDateTime votingExpiryDateTime;
 
 }

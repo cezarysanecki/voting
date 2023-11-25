@@ -12,7 +12,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-import pl.cezarysanecki.voting.dto.GetVoteQuestionnaireDto;
+import pl.cezarysanecki.voting.dto.VoteQuestionnaireDto;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -26,6 +26,8 @@ public class VoteQuestionnaire {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id")
   private Long id;
+
+  private String title;
 
   @OneToMany(cascade = CascadeType.ALL)
   private List<Question> questions;
@@ -44,9 +46,10 @@ public class VoteQuestionnaire {
   @JoinColumn(name = "creator_id")
   private Party creator;
 
-  public GetVoteQuestionnaireDto toDto() {
-    return GetVoteQuestionnaireDto.builder()
+  public VoteQuestionnaireDto toDto() {
+    return VoteQuestionnaireDto.builder()
         .id(id)
+        .title(title)
         .questions(questions.stream()
             .map(Question::toDto)
             .toList())

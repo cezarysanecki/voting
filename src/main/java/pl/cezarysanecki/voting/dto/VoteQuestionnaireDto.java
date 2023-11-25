@@ -12,9 +12,10 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(force = true)
-public class GetVoteQuestionnaireDto {
+public class VoteQuestionnaireDto {
 
   Long id;
+  String title;
   List<QuestionDto> questions;
   LocalDateTime creationDateTime;
   boolean readyToVote;
