@@ -4,10 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.stereotype.Service;
 import pl.cezarysanecki.voting.dto.CreateVoteQuestionnaireDto;
-import pl.cezarysanecki.voting.dto.VoteQuestionnaireDto;
 import pl.cezarysanecki.voting.dto.QuestionAnswerDto;
 import pl.cezarysanecki.voting.dto.QuestionDto;
 import pl.cezarysanecki.voting.dto.UpdateVoteQuestionnaireDto;
+import pl.cezarysanecki.voting.dto.VoteQuestionnaireDto;
 import pl.cezarysanecki.voting.model.Question;
 import pl.cezarysanecki.voting.model.QuestionAnswer;
 import pl.cezarysanecki.voting.model.VoteQuestionnaire;
@@ -39,11 +39,9 @@ public class VoteQuestionnaireService {
     VoteQuestionnaire foundVoteQuestionnaire = voteQuestionnaireRepository.findById(id)
         .orElseThrow(() -> new IllegalStateException("cannot find questionnaire for id: " + id));
 
-    foundVoteQuestionnaire.setReadyToVote(updateVoteQuestionnaireDto.isReadyToVote());
-    foundVoteQuestionnaire.setVotingExpiryDateTime(updateVoteQuestionnaireDto.getVotingExpiryDateTime());
-
-    foundVoteQuestionnaire.getQuestions().clear();
-    foundVoteQuestionnaire.getQuestions().addAll(mapQuestions(updateVoteQuestionnaireDto.getQuestions(), foundVoteQuestionnaire));
+    foundVoteQuestionnaire.setTitle(updateVoteQuestionnaireDto.getTitle());
+    foundVoteQuestionnaire.setQuestions(
+        mapQuestions(updateVoteQuestionnaireDto.getQuestions(), foundVoteQuestionnaire));
 
     return voteQuestionnaireRepository.save(foundVoteQuestionnaire)
         .toDto();
