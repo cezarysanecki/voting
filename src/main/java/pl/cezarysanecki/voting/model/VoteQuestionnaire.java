@@ -13,6 +13,7 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import pl.cezarysanecki.voting.dto.VoteQuestionnaireDto;
+import pl.cezarysanecki.voting.dto.VoteQuestionnaireWithoutQuestionsDto;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -45,6 +46,16 @@ public class VoteQuestionnaire {
   @ManyToOne
   @JoinColumn(name = "creator_id")
   private Party creator;
+
+  public VoteQuestionnaireWithoutQuestionsDto toShortDto() {
+    return VoteQuestionnaireWithoutQuestionsDto.builder()
+        .id(id)
+        .title(title)
+        .creationDateTime(creationDateTime)
+        .readyToVote(readyToVote)
+        .votingExpiryDateTime(votingExpiryDateTime)
+        .build();
+  }
 
   public VoteQuestionnaireDto toDto() {
     return VoteQuestionnaireDto.builder()

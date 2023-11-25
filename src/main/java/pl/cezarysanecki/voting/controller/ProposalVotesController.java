@@ -10,8 +10,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pl.cezarysanecki.voting.dto.CreateVoteQuestionnaireDto;
-import pl.cezarysanecki.voting.dto.UpdateVoteQuestionnaireDto;
+import pl.cezarysanecki.voting.dto.EditVoteQuestionnaireDto;
 import pl.cezarysanecki.voting.dto.VoteQuestionnaireDto;
+import pl.cezarysanecki.voting.dto.VoteQuestionnaireWithoutQuestionsDto;
 import pl.cezarysanecki.voting.service.VoteQuestionnaireService;
 
 import java.util.List;
@@ -23,28 +24,35 @@ public class ProposalVotesController {
 
   private final VoteQuestionnaireService voteQuestionnaireService;
 
-  @PostMapping
-  VoteQuestionnaireDto createQuestionnaire(@RequestBody CreateVoteQuestionnaireDto createVoteQuestionnaireDto) {
-    return voteQuestionnaireService.createQuestionnaire(createVoteQuestionnaireDto);
+  @PostMapping("/party/{partyId}")
+  VoteQuestionnaireDto createQuestionnaire(
+      @PathVariable("partyId") Long partyId,
+      @RequestBody CreateVoteQuestionnaireDto createVoteQuestionnaireDto) {
+    return voteQuestionnaireService.createQuestionnaire(partyId, createVoteQuestionnaireDto);
   }
 
-  @PutMapping("/{id}")
-  VoteQuestionnaireDto editQuestionnaire(@PathVariable Long id, @RequestBody UpdateVoteQuestionnaireDto updateVoteQuestionnaireDto) {
-    return voteQuestionnaireService.editQuestionnaire(id, updateVoteQuestionnaireDto);
+  @PutMapping("/{questionnaireId}/party/{partyId}")
+  VoteQuestionnaireDto editQuestionnaire(
+      @PathVariable("questionnaireId") Long questionnaireId,
+      @PathVariable("partyId") Long partyId,
+      @RequestBody EditVoteQuestionnaireDto editVoteQuestionnaireDto) {
+    return voteQuestionnaireService.editQuestionnaire(partyId, questionnaireId, editVoteQuestionnaireDto);
   }
 
-  @DeleteMapping("/{id}")
-  void deleteProposal(@PathVariable Long id) {
-    voteQuestionnaireService.deleteQuestionnaire(id);
+  @DeleteMapping("/{questionnaireId}/party/{partyId}")
+  void deleteProposal(@PathVariable("questionnaireId") Long questionnaireId, @PathVariable("partyId") Long partyId) {
+    voteQuestionnaireService.deleteQuestionnaire(partyId, questionnaireId);
   }
 
-  @GetMapping("/{id}")
-  VoteQuestionnaireDto getProposal(@PathVariable Long id) {
-    return voteQuestionnaireService.getQuestionnaire(id);
+  @GetMapping("/{questionnaireId}/party/{partyId}")
+  VoteQuestionnaireDto getProposal(
+      @PathVariable("questionnaireId") Long questionnaireId,
+      @PathVariable("partyId") Long partyId) {
+    return voteQuestionnaireService.getQuestionnaire(partyId, questionnaireId);
   }
 
   @GetMapping
-  List<VoteQuestionnaireDto> getProposals() {
+  List<VoteQuestionnaireWithoutQuestionsDto> getProposals() {
     return voteQuestionnaireService.getQuestionnaires();
   }
 

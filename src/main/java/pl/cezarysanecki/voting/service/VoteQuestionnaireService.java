@@ -4,13 +4,16 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.stereotype.Service;
 import pl.cezarysanecki.voting.dto.CreateVoteQuestionnaireDto;
+import pl.cezarysanecki.voting.dto.EditVoteQuestionnaireDto;
 import pl.cezarysanecki.voting.dto.QuestionAnswerDto;
 import pl.cezarysanecki.voting.dto.QuestionDto;
-import pl.cezarysanecki.voting.dto.UpdateVoteQuestionnaireDto;
 import pl.cezarysanecki.voting.dto.VoteQuestionnaireDto;
+import pl.cezarysanecki.voting.dto.VoteQuestionnaireWithoutQuestionsDto;
+import pl.cezarysanecki.voting.model.Party;
 import pl.cezarysanecki.voting.model.Question;
 import pl.cezarysanecki.voting.model.QuestionAnswer;
 import pl.cezarysanecki.voting.model.VoteQuestionnaire;
+import pl.cezarysanecki.voting.repository.PartyRepository;
 import pl.cezarysanecki.voting.repository.VoteQuestionnaireRepository;
 
 import java.time.LocalDateTime;
@@ -20,9 +23,15 @@ import java.util.List;
 @RequiredArgsConstructor
 public class VoteQuestionnaireService {
 
+  private final PartyRepository partyRepository;
   private final VoteQuestionnaireRepository voteQuestionnaireRepository;
 
-  public VoteQuestionnaireDto createQuestionnaire(CreateVoteQuestionnaireDto createVoteQuestionnaireDto) {
+  public VoteQuestionnaireDto createQuestionnaire(
+      Long partyId,
+      CreateVoteQuestionnaireDto createVoteQuestionnaireDto) {
+    Party party = partyRepository.findById(partyId)
+        .orElseThrow(() -> new IllegalStateException("cannot find party by id: " + partyId));
+
     VoteQuestionnaire entityVoteQuestionnaire = new VoteQuestionnaire();
 
     entityVoteQuestionnaire.setTitle(createVoteQuestionnaireDto.getTitle());
@@ -30,37 +39,57 @@ public class VoteQuestionnaireService {
     entityVoteQuestionnaire.setVotingExpiryDateTime(null);
     entityVoteQuestionnaire.setCreationDateTime(LocalDateTime.now());
     entityVoteQuestionnaire.setQuestions(mapQuestions(createVoteQuestionnaireDto.getQuestions(), entityVoteQuestionnaire));
+    entityVoteQuestionnaire.setCreator(party);
 
     return voteQuestionnaireRepository.save(entityVoteQuestionnaire)
         .toDto();
   }
 
-  public VoteQuestionnaireDto editQuestionnaire(final Long id, UpdateVoteQuestionnaireDto updateVoteQuestionnaireDto) {
-    VoteQuestionnaire foundVoteQuestionnaire = voteQuestionnaireRepository.findById(id)
-        .orElseThrow(() -> new IllegalStateException("cannot find questionnaire for id: " + id));
+  public VoteQuestionnaireDto editQuestionnaire(
+      Long partyId,
+      Long questionnaireId,
+      EditVoteQuestionnaireDto editVoteQuestionnaireDto) {
+    VoteQuestionnaire foundVoteQuestionnaire = voteQuestionnaireRepository.findById(questionnaireId)
+        .orElseThrow(() -> new IllegalStateException("cannot find questionnaire by id: " + questionnaireId));
 
-    foundVoteQuestionnaire.setTitle(updateVoteQuestionnaireDto.getTitle());
+    if (!foundVoteQuestionnaire.getCreator().getId().equals(partyId)) {
+      throw new IllegalArgumentException("only creator can edit questionnaire");
+    }
+
+    foundVoteQuestionnaire.setTitle(editVoteQuestionnaireDto.getTitle());
     foundVoteQuestionnaire.setQuestions(
-        mapQuestions(updateVoteQuestionnaireDto.getQuestions(), foundVoteQuestionnaire));
+        mapQuestions(editVoteQuestionnaireDto.getQuestions(), foundVoteQuestionnaire));
 
     return voteQuestionnaireRepository.save(foundVoteQuestionnaire)
         .toDto();
   }
 
-  public void deleteQuestionnaire(Long id) {
-    voteQuestionnaireRepository.deleteById(id);
+  public void deleteQuestionnaire(Long partyId, Long questionnaireId) {
+    VoteQuestionnaire foundVoteQuestionnaire = voteQuestionnaireRepository.findById(questionnaireId)
+        .orElseThrow(() -> new IllegalStateException("cannot find questionnaire by id: " + questionnaireId));
+
+    if (!foundVoteQuestionnaire.getCreator().getId().equals(partyId)) {
+      throw new IllegalArgumentException("only creator can edit questionnaire");
+    }
+
+    voteQuestionnaireRepository.delete(foundVoteQuestionnaire);
   }
 
-  public VoteQuestionnaireDto getQuestionnaire(Long id) {
-    return voteQuestionnaireRepository.findById(id)
-        .orElseThrow(() -> new IllegalStateException("cannot find questionnaire for id: " + id))
-        .toDto();
+  public VoteQuestionnaireDto getQuestionnaire(Long partyId, Long questionnaireId) {
+    VoteQuestionnaire foundVoteQuestionnaire = voteQuestionnaireRepository.findById(questionnaireId)
+        .orElseThrow(() -> new IllegalStateException("cannot find questionnaire by id: " + questionnaireId));
+
+    if (!foundVoteQuestionnaire.getCreator().getId().equals(partyId)) {
+      throw new IllegalArgumentException("only creator can edit questionnaire");
+    }
+
+    return foundVoteQuestionnaire.toDto();
   }
 
-  public List<VoteQuestionnaireDto> getQuestionnaires() {
+  public List<VoteQuestionnaireWithoutQuestionsDto> getQuestionnaires() {
     return IterableUtils.toList(voteQuestionnaireRepository.findAll())
         .stream()
-        .map(VoteQuestionnaire::toDto)
+        .map(VoteQuestionnaire::toShortDto)
         .toList();
   }
 

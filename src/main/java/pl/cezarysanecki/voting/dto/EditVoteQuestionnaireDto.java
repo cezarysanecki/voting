@@ -11,7 +11,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(force = true)
-public class UpdateVoteQuestionnaireDto {
+public class EditVoteQuestionnaireDto {
 
   String title;
   List<QuestionDto> questions;
