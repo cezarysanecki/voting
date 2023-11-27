@@ -30,13 +30,14 @@ public class VoteQuestionnaireService {
   public VoteQuestionnaireDto createQuestionnaire(
       Long partyId,
       CreateVoteQuestionnaireDto createVoteQuestionnaireDto) {
-    Party party = partyRepository.findById(partyId)
-        .orElseThrow(() -> new IllegalStateException("cannot find party by id: " + partyId));
-
     // maybe VIP flag?
     if (createVoteQuestionnaireDto.getQuestions().size() + 1 > 10) {
       throw new IllegalArgumentException("questionnaire cannot have more then 10 questions");
     }
+
+    Party party = partyRepository.findById(partyId)
+        .orElseThrow(() -> new IllegalStateException("cannot find party by id: " + partyId));
+
     if (party.getQuestionnaires()
         .stream()
         .filter(Predicate.not(VoteQuestionnaire::isReadyToVote))
