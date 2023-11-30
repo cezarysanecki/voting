@@ -81,7 +81,7 @@
       "containerId": null,
       "originalText": "Proposition to vote",
       "lineHeight": 1.25,
-      "baseline": 25
+      "baseline": 24
     },
     {
       "type": "text",
@@ -117,7 +117,7 @@
       "containerId": null,
       "originalText": "Voting",
       "lineHeight": 1.25,
-      "baseline": 25
+      "baseline": 24
     },
     {
       "type": "rectangle",
@@ -2351,7 +2351,7 @@
       "containerId": null,
       "originalText": "Results",
       "lineHeight": 1.25,
-      "baseline": 25
+      "baseline": 24
     },
     {
       "type": "text",
