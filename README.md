@@ -7,6 +7,8 @@ The first iteration will represent model that is coupled and anemicFirstly it wi
 3 layered architecture with anemic entitiesNext we will see, for sure I would like to make 
 it cleaner.
 
+---
+
 ## Functionalities:
 
 ### Handling questionnaire
@@ -63,11 +65,17 @@ _Unpublishing:_
 - creating reports
 - analytics
 
-### Dictionary:
+---
+
+## Dictionaries
+
+### 3 layers arch:
 - active questionnaire == users can vote (flag `readyToVote` is true)
 - archived questionnaire == hold to read (flag `readyToVote` is false, but `votingExpiryDateTime` is present)
 - published questionnaire == users can vote
 - unpublished questionnaire == is in edit mode 
+
+---
 
 ## Topics to learn
 
