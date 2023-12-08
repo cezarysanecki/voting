@@ -22,16 +22,16 @@ _Creating:_
 _Editing:_
 - questionnaire can have maximum 10 questions
 - only owner user can edit questionnaire
-- cannot edit active questionnaire
+- cannot edit published questionnaire
 - cannot edit archived questionnaire
 
 _Deleting:_
 - only owner user can delete questionnaire
-- cannot delete active questionnaire
+- cannot delete published questionnaire
 - cannot delete archived questionnaire
 
 _Publishing:_
-- can only have 3 active questionnaires
+- can only have 3 published questionnaires
 - min expiry date is 4 hours from now
 - max expiry date is 3 weeks from now
 - has to have assigned group of voters
@@ -70,10 +70,9 @@ _Unpublishing:_
 ## Dictionaries
 
 ### 3 layers arch:
-- active questionnaire == users can vote (flag `readyToVote` is true)
-- archived questionnaire == hold to read (flag `readyToVote` is false, but `votingExpiryDateTime` is present)
-- published questionnaire == users can vote
-- unpublished questionnaire == is in edit mode 
+- published questionnaire == users can vote (flag `readyToVote` is true and `votingExpiryDateTime` is present and not expired)
+- draft/unpublished questionnaire == is not present to vote (flag `readyToVote` is false and `votingExpiryDateTime` is null)
+- archived questionnaire == hold only to archive (`votingExpiryDateTime` is present and expired)
 
 ---
 

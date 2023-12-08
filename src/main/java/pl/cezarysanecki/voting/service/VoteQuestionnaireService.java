@@ -59,6 +59,48 @@ public class VoteQuestionnaireService {
         .toDto();
   }
 
+  public VoteQuestionnaireDto publishQuestionnaire(Long questionnaireId, Long partyId, LocalDateTime expiryDate) {
+    if (LocalDateTime.now().plusHours(4).isAfter(expiryDate) || LocalDateTime.now().plusWeeks(3).isBefore(expiryDate)) {
+      throw new IllegalArgumentException("questionnaire must be at least valid for 4 hours and cannot last longer than 3 weeks");
+    }
+
+    VoteQuestionnaire foundVoteQuestionnaire = voteQuestionnaireRepository.findById(questionnaireId)
+        .orElseThrow(() -> new IllegalStateException("cannot find questionnaire by id: " + questionnaireId));
+    Party owner = partyRepository.findByIdAndActiveIsTrue(partyId)
+        .orElseThrow(() -> new IllegalStateException("cannot find active party by id: " + partyId));
+
+    if (!foundVoteQuestionnaire.getCreator().getId().equals(owner.getId())) {
+      throw new IllegalArgumentException("only creator can publish questionnaire");
+    }
+    if (owner.getQuestionnaires()
+        .stream()
+        .filter(VoteQuestionnaire::isReadyToVote)
+        .filter(questionnaire -> LocalDateTime.now().isBefore(questionnaire.getVotingExpiryDateTime()))
+        .count() + 1 > 3) {
+      throw new IllegalArgumentException("user cannot have more then 3 published questionnaires");
+    }
+    if (LocalDateTime.now().isAfter(foundVoteQuestionnaire.getVotingExpiryDateTime())) {
+      throw new IllegalArgumentException("cannot publish archived questionnaire");
+    }
+
+    foundVoteQuestionnaire.setReadyToVote(true);
+    foundVoteQuestionnaire.setVotingExpiryDateTime();
+
+  }
+
+  public VoteQuestionnaireDto unpublishQuestionnaire(Long questionnaireId, Long partyId) {
+    VoteQuestionnaire foundVoteQuestionnaire = voteQuestionnaireRepository.findById(questionnaireId)
+        .orElseThrow(() -> new IllegalStateException("cannot find questionnaire by id: " + questionnaireId));
+    Party owner = partyRepository.findByIdAndActiveIsTrue(partyId)
+        .orElseThrow(() -> new IllegalStateException("cannot find active party by id: " + partyId));
+
+    if (!foundVoteQuestionnaire.getCreator().getId().equals(owner.getId())) {
+      throw new IllegalArgumentException("only creator can deactivate questionnaire");
+    }
+
+
+  }
+
   public VoteQuestionnaireDto editQuestionnaire(
       Long partyId,
       Long questionnaireId,
@@ -76,7 +118,7 @@ public class VoteQuestionnaireService {
       throw new IllegalArgumentException("only creator can edit questionnaire");
     }
     if (foundVoteQuestionnaire.isReadyToVote()) {
-      throw new IllegalArgumentException("cannot edit active questionnaire");
+      throw new IllegalArgumentException("cannot edit published questionnaire");
     }
     if (foundVoteQuestionnaire.getVotingExpiryDateTime() != null) {
       throw new IllegalArgumentException("cannot edit historical questionnaire");
@@ -100,7 +142,7 @@ public class VoteQuestionnaireService {
       throw new IllegalArgumentException("only creator can edit questionnaire");
     }
     if (foundVoteQuestionnaire.isReadyToVote()) {
-      throw new IllegalArgumentException("cannot delete active questionnaire");
+      throw new IllegalArgumentException("cannot delete published questionnaire");
     }
     if (foundVoteQuestionnaire.getVotingExpiryDateTime() != null) {
       throw new IllegalArgumentException("cannot delete archive questionnaire");

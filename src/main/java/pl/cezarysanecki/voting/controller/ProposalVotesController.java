@@ -31,6 +31,20 @@ public class ProposalVotesController {
     return voteQuestionnaireService.createQuestionnaire(partyId, createVoteQuestionnaireDto);
   }
 
+  @PostMapping("/party/{partyId}/activate")
+  VoteQuestionnaireDto activateQuestionnaire(
+      @PathVariable("questionnaireId") Long questionnaireId,
+      @PathVariable("partyId") Long partyId) {
+    return voteQuestionnaireService.publishQuestionnaire(questionnaireId, partyId);
+  }
+
+  @PostMapping("/party/{partyId}/deactivate")
+  VoteQuestionnaireDto deactivateQuestionnaire(
+      @PathVariable("questionnaireId") Long questionnaireId,
+      @PathVariable("partyId") Long partyId) {
+    return voteQuestionnaireService.unpublishQuestionnaire(questionnaireId, partyId);
+  }
+
   @PutMapping("/{questionnaireId}/party/{partyId}")
   VoteQuestionnaireDto editQuestionnaire(
       @PathVariable("questionnaireId") Long questionnaireId,
