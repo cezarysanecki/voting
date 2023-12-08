@@ -36,6 +36,7 @@ public class VoteQuestionnaireService {
     }
 
     Party party = partyRepository.findById(partyId)
+        .filter(Party::isActive)
         .orElseThrow(() -> new IllegalStateException("cannot find party by id: " + partyId));
 
     if (party.getQuestionnaires()
