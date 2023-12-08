@@ -35,8 +35,7 @@ public class VoteQuestionnaireService {
       throw new IllegalArgumentException("questionnaire cannot have more then 10 questions");
     }
 
-    Party party = partyRepository.findById(partyId)
-        .filter(Party::isActive)
+    Party party = partyRepository.findByIdAndActiveIsTrue(partyId)
         .orElseThrow(() -> new IllegalStateException("cannot find party by id: " + partyId));
 
     if (party.getQuestionnaires()
