@@ -36,7 +36,7 @@ public class VoteQuestionnaireService {
     }
 
     Party party = partyRepository.findByIdAndActiveIsTrue(partyId)
-        .orElseThrow(() -> new IllegalStateException("cannot find party by id: " + partyId));
+        .orElseThrow(() -> new IllegalStateException("cannot find active party by id: " + partyId));
 
     if (party.getQuestionnaires()
         .stream()
@@ -69,8 +69,10 @@ public class VoteQuestionnaireService {
 
     VoteQuestionnaire foundVoteQuestionnaire = voteQuestionnaireRepository.findById(questionnaireId)
         .orElseThrow(() -> new IllegalStateException("cannot find questionnaire by id: " + questionnaireId));
+    Party owner = partyRepository.findByIdAndActiveIsTrue(partyId)
+        .orElseThrow(() -> new IllegalStateException("cannot find active party by id: " + partyId));
 
-    if (!foundVoteQuestionnaire.getCreator().getId().equals(partyId)) {
+    if (!foundVoteQuestionnaire.getCreator().getId().equals(owner.getId())) {
       throw new IllegalArgumentException("only creator can edit questionnaire");
     }
     if (foundVoteQuestionnaire.isReadyToVote()) {
@@ -91,8 +93,10 @@ public class VoteQuestionnaireService {
   public void deleteQuestionnaire(Long partyId, Long questionnaireId) {
     VoteQuestionnaire foundVoteQuestionnaire = voteQuestionnaireRepository.findById(questionnaireId)
         .orElseThrow(() -> new IllegalStateException("cannot find questionnaire by id: " + questionnaireId));
+    Party owner = partyRepository.findByIdAndActiveIsTrue(partyId)
+        .orElseThrow(() -> new IllegalStateException("cannot find active party by id: " + partyId));
 
-    if (!foundVoteQuestionnaire.getCreator().getId().equals(partyId)) {
+    if (!foundVoteQuestionnaire.getCreator().getId().equals(owner.getId())) {
       throw new IllegalArgumentException("only creator can edit questionnaire");
     }
     if (foundVoteQuestionnaire.isReadyToVote()) {
